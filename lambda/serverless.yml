@@ -1,0 +1,93 @@
+service: workshop-conube
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  memorySize: 128
+  tracing:
+    lambda: true
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - sqs:SendMessage
+      - sqs:ReceiveMessage
+      - sqs:DeleteMessage
+      - sqs:GetQueueAttributes
+    Resource: "arn:aws:sqs:us-east-1:581871075443:OrdersQueue"
+  - Effect: "Allow"
+    Action:
+      - sqs:SendMessage
+      - sqs:ReceiveMessage
+      - sqs:DeleteMessage
+      - sqs:GetQueueAttributes
+    Resource: "arn:aws:sqs:us-east-1:581871075443:LogsQueue"
+  - Effect: Allow
+    Action:
+      - dynamodb:DescribeTable
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource:
+      - "Fn::GetAtt": [OrderTable, Arn]
+      - "Fn::GetAtt": [LogTable, Arn]
+
+functions:
+  createOrder:
+    handler: src/app.createOrder
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - OrdersQueue
+              - Arn
+  createLog:
+    handler: src/app.createLog
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - LogsQueue
+              - Arn
+
+resources:
+  Resources:
+    OrdersQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "OrdersQueue"
+    LogsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "LogsQueue"
+    OrderTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: OrderTable
+            AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+    LogTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: LogTable
+            AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
