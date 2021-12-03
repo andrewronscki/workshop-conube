@@ -19,7 +19,7 @@ export class CreateOrder {
 
     const params = {
       Message: JSON.stringify(message),
-      TopicArn: 'arn:aws:sns:us-east-1:581871075443:ordersTopic',
+      TopicArn: '{arn do tópico}',
     };
 
     await new AWS.SNS({
