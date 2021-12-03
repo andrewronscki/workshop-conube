@@ -8,8 +8,8 @@ export class CreateOrder {
   async execute(customerId: string, items: Items[]): Promise<void> {
     AWS.config.update({
       region: 'us-east-1',
-      accessKeyId: 'AKIAYO6RYABZYSXUD6EA',
-      secretAccessKey: '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',
+      accessKeyId: '{access_key}',
+      secretAccessKey: '{secret_key}',
     });
 
     const message: Message = {
