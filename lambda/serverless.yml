@@ -16,14 +16,14 @@ provider:
       - sqs:ReceiveMessage
       - sqs:DeleteMessage
       - sqs:GetQueueAttributes
-    Resource: "arn:aws:sqs:us-east-1:581871075443:OrdersQueue"
+    Resource: "arn da queue"
   - Effect: "Allow"
     Action:
       - sqs:SendMessage
       - sqs:ReceiveMessage
       - sqs:DeleteMessage
       - sqs:GetQueueAttributes
-    Resource: "arn:aws:sqs:us-east-1:581871075443:LogsQueue"
+    Resource: "arn da queue"
   - Effect: Allow
     Action:
       - dynamodb:DescribeTable
